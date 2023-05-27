@@ -4,7 +4,7 @@ import { url } from '../lib/data.js';
 
 import { SITE_TITLE } from './constants.js';
 
-const { class: clazz } = Astro.props;
+const { class: className } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -45,7 +45,7 @@ const { class: clazz } = Astro.props;
 	<body
 		class:list={[
 			//
-			clazz,
+			className,
 			'bg-gray-50 dark:bg-gray-800',
 			'scrollbar scrollbar-w-3 scrollbar-thumb-rounded-[0.25rem]',
 			'scrollbar-track-slate-200  scrollbar-thumb-gray-400',

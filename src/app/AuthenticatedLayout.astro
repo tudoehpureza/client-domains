@@ -1,0 +1,46 @@
+---
+import FooterSidebar from './FooterSidebar.astro';
+import LayoutCommon from './LayoutCommon.astro';
+import AuthenticatedNavBar from './AuthenticatedNavBar.astro';
+import SideBar from './SideBar.astro';
+
+const { isSideBarEnabled } = Astro.props;
+---
+
+<LayoutCommon>
+	<AuthenticatedNavBar />
+
+	{isSideBarEnabled && <SideBar />}
+
+	{
+		!isSideBarEnabled && (
+			<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+				<div
+					id="main-content"
+					class="relative w-full max-w-screen-2xl mx-auto h-full overflow-y-auto bg-gray-50 dark:bg-gray-900 min-h-screen"
+				>
+					<div class="px-4 pt-6 2xl:px-0">
+						<slot />
+					</div>
+
+					<FooterSidebar />
+				</div>
+			</div>
+		)
+	}
+
+	{
+		isSideBarEnabled && (
+			<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+				<div
+					id="main-content"
+					class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 min-h-screen"
+				>
+					<slot />
+
+					<FooterSidebar />
+				</div>
+			</div>
+		)
+	}
+</LayoutCommon>

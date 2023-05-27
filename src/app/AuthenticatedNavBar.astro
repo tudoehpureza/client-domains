@@ -1,10 +1,9 @@
 ---
 /* eslint max-lines: 'off' */
 
-import { asset } from '../lib/data.js';
+import { asset, url } from '../lib/data.js';
 
 import ColorModeSwitcher from '../components/ColorModeSwitcher.astro';
-import GitHubButton from '../components/GitHubButton.astro';
 import SearchInput from '../components/SearchInput.astro';
 ---
 
@@ -59,8 +58,6 @@ import SearchInput from '../components/SearchInput.astro';
 			</div>
 
 			<div class="flex items-center">
-				<GitHubButton repository="themesberg/flowbite-astro-admin-dashboard" />
-
 				<!-- Search mobile -->
 				<button
 					id="toggleSidebarMobileSearch"
@@ -304,12 +301,14 @@ import SearchInput from '../components/SearchInput.astro';
 								<div
 									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
 								>
-									<span class="font-semibold text-gray-900 dark:text-white"
-										>Leslie Livingston</span
-									> mentioned you in a comment: <span
+									<span class="font-semibold text-gray-900 dark:text-white">
+										Leslie Livingston
+									</span> mentioned you in a comment:
+									<span
 										class="font-medium text-primary-700 dark:text-primary-500"
-										>@bonnie.green</span
-									> what do you say?
+									>
+										@bonnie.green
+									</span> what do you say?
 								</div>
 								<div
 									class="text-xs font-medium text-primary-700 dark:text-primary-400"
@@ -346,10 +345,10 @@ import SearchInput from '../components/SearchInput.astro';
 								<div
 									class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400"
 								>
-									<span class="font-semibold text-gray-900 dark:text-white"
-										>Robert Brown</span
-									> posted a new video: Glassmorphism - learn how to implement the
-									new design trend.
+									<span class="font-semibold text-gray-900 dark:text-white">
+										Robert Brown
+									</span> posted a new video: Glassmorphism - learn how to implement
+									the new design trend.
 								</div>
 								<div
 									class="text-xs font-medium text-primary-700 dark:text-primary-400"
@@ -408,7 +407,7 @@ import SearchInput from '../components/SearchInput.astro';
 					</div>
 					<div class="grid grid-cols-3 gap-4 p-4">
 						<a
-							href="#"
+							href={url('sales')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -426,7 +425,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('users')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -443,7 +442,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('inbox')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -461,7 +460,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('profile')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -479,7 +478,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('settings')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -497,7 +496,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('products')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -515,7 +514,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('pricing')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -535,7 +534,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('billing')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -553,7 +552,7 @@ import SearchInput from '../components/SearchInput.astro';
 							</div>
 						</a>
 						<a
-							href="#"
+							href={url('authentication/sign-up')}
 							class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
 						>
 							<svg
@@ -615,31 +614,39 @@ import SearchInput from '../components/SearchInput.astro';
 						<ul class="py-1" role="none">
 							<li>
 								<a
-									href="#"
+									href="/"
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Dashboard</a
+									role="menuitem"
 								>
+									Dashboard
+								</a>
 							</li>
 							<li>
 								<a
-									href="#"
+									href={url('settings')}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Settings</a
+									role="menuitem"
 								>
+									Settings
+								</a>
 							</li>
 							<li>
 								<a
-									href="#"
+									href={url('earnings')}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Earnings</a
+									role="menuitem"
 								>
+									Earnings
+								</a>
 							</li>
 							<li>
 								<a
-									href="#"
+									href={url('authentication/sign-in')}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-									role="menuitem">Sign out</a
+									role="menuitem"
 								>
+									Sign out
+								</a>
 							</li>
 						</ul>
 					</div>

@@ -1,9 +1,7 @@
 // Extracted from https://github.com/JulianCataldo/web-garden/blob/develop/.vscode/settings.json
-
 {
 	/* —————————————————————————————— Typescript —————————————————————————————— */
 	"typescript.inlayHints.parameterNames.enabled": "all",
-
 	/* —————————————————————————————— Tailwind ———————————————————————————————— */
 	"tailwindCSS.includeLanguages": {
 		/* 
@@ -16,9 +14,10 @@
 		/* Useful for adding IntelliSense to Markdown, too */
 		"md": "html"
 	},
-
-	"tailwindCSS.classAttributes": ["class", "class:list"],
-
+	"tailwindCSS.classAttributes": [
+		"class",
+		"class:list"
+	],
 	/* —————————————————————————————— ESLint —————————————————————————————————— */
 	"eslint.validate": [
 		"astro" /* Using `astro-eslint-parser` + `eslint-plugin-astro` */,
@@ -27,15 +26,34 @@
 		"typescript",
 		"typescriptreact"
 	],
-
 	/* —————————————————————————————— Prettier ———————————————————————————————— */
 	/* Add support for `prettier-plugin-astro` */
-	"prettier.documentSelectors": ["**/*.astro"],
+	"prettier.documentSelectors": [
+		"**/*.astro"
+	],
 	"[astro]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
-
 	/* —————————————————————————————— Misc. ———————————————————————————————— */
-
-	"markdown.extension.toc.levels": "2..6"
+	"markdown.extension.toc.levels": "2..6",
+	"workbench.colorCustomizations": {
+		"activityBar.activeBackground": "#cea8dc",
+		"activityBar.background": "#cea8dc",
+		"activityBar.foreground": "#15202b",
+		"activityBar.inactiveForeground": "#15202b99",
+		"activityBarBadge.background": "#887237",
+		"activityBarBadge.foreground": "#e7e7e7",
+		"commandCenter.border": "#15202b99",
+		"sash.hoverBorder": "#cea8dc",
+		"statusBar.background": "#b983ce",
+		"statusBar.foreground": "#15202b",
+		"statusBarItem.hoverBackground": "#a45ec0",
+		"statusBarItem.remoteBackground": "#b983ce",
+		"statusBarItem.remoteForeground": "#15202b",
+		"titleBar.activeBackground": "#b983ce",
+		"titleBar.activeForeground": "#15202b",
+		"titleBar.inactiveBackground": "#b983ce99",
+		"titleBar.inactiveForeground": "#15202b99"
+	},
+	"peacock.color": "#b983ce"
 }

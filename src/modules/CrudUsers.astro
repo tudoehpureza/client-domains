@@ -4,13 +4,13 @@
 import NavPagination from '../components/NavPagination.astro';
 import { asset, fetchData } from '../lib/data.js';
 
-const { class: clazz } = Astro.props;
+const { class: className } = Astro.props;
 const users = await fetchData('users');
 ---
 
 <entities-crud
 	type="users"
-	class:list={['block overflow-hidden shadow', clazz]}
+	class:list={['block overflow-hidden shadow', className]}
 >
 	<div
 		class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700"
