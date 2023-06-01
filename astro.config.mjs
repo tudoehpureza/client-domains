@@ -12,7 +12,7 @@ export default defineConfig({
 		? 'https://tudoehpureza.github.io'
 		: `http://localhost:${DEV_PORT}`,
 	base: process.env.CI ? '/client-domains' : undefined,
-	// output: 'server',
+	output: 'server',
 
 	/* Like Vercel, Netlify,… Mimicking for dev. server */
 	// trailingSlash: 'always',
@@ -28,5 +28,4 @@ export default defineConfig({
 		react(),
 	],
 	output: 'server',
-	site: '',
 });
