@@ -1,0 +1,10 @@
+---
+interface Props {
+	onClickFunction: Function;
+}
+const { onClickFunction } = Astro.props;
+---
+
+<button class="ColumnTitle" onclick={onClickFunction()}>
+	<slot />
+</button>
