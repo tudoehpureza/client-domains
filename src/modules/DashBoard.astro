@@ -1,11 +1,14 @@
 ---
 /* eslint max-lines: 'off' */
 
-import { TableComponent as Table } from '../shared/React/components/table/Table';
+import { Table } from '../shared/React/components/table/Table';
+import Card from '@components/card/index.astro';
 ---
 
 <div class="px-4 pt-6">
-	<Table client:load />
+	<Card>
+		<Table client:load />
+	</Card>
 	<div
 		class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800"
 	>

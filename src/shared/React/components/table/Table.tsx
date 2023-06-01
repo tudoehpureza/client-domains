@@ -1,320 +1,310 @@
 import React from 'react';
-
-import './index.css';
-
 import {
-	Column,
-	Table as ReactTable,
-	useReactTable,
-	getCoreRowModel,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	ColumnDef,
-	flexRender,
-} from '@tanstack/react-table';
+	MantineReactTable,
+	MantineReactTableProps,
+	MRT_Cell,
+	MRT_ColumnDef,
+	MRT_Row,
+} from 'mantine-react-table';
+import {
+	Box,
+	Button,
+	Dialog,
+	Flex,
+	Title,
+	ActionIcon,
+	Stack,
+	TextInput,
+	Tooltip,
+	Select,
+} from '@mantine/core';
+import { IconTrash, IconEdit } from '@tabler/icons-react';
+import { data, states } from './makeData';
+import type { Domain } from './domain.schema';
 
-import '@components/card/index.css';
-import '@components/table/index.css';
-import '@components/table/ColumnTitle/index.css';
-import '@components/table/Button/index.css';
+export const Table = () => {
+	const [createModalOpen, setCreateModalOpen] = React.useState(false);
+	const [tableData, setTableData] = React.useState<Domain[]>(() => data);
+	const [validationErrors, setValidationErrors] = React.useState<{
+		[cellId: string]: string;
+	}>({});
 
-import { makeData, Person } from './makeData';
+	const handleCreateNewRow = (values: Domain) => {
+		tableData.push(values);
+		setTableData([...tableData]);
+	};
 
-export const TableComponent = () => {
-	const rerender = React.useReducer(() => ({}), {})[1];
+	const handleSaveRowEdits: MantineReactTableProps<Domain>['onEditingRowSave'] =
+		async ({ exitEditingMode, row, values }) => {
+			if (!Object.keys(validationErrors).length) {
+				tableData[row.index] = values;
+				//send/receive api updates here, then refetch or update local table data for re-render
+				setTableData([...tableData]);
+				exitEditingMode(); //required to exit editing mode and close modal
+			}
+		};
 
-	const columns = React.useMemo<ColumnDef<Person>[]>(
-		() => [
-			{
-				id: 'title',
-				footer: (props) => props.column.id,
-				columns: [
-					{
-						accessorFn: (row) => row.firstName,
-						accessorKey: 'firstName',
-						cell: (info) => info.getValue(),
-						header: () => <span className="ColumnTitle">First Name</span>,
-						footer: (props) => props.column.id,
-					},
-					{
-						accessorFn: (row) => row.lastName,
-						id: 'lastName',
-						cell: (info) => info.getValue(),
-						header: () => <span className="ColumnTitle">Last Name</span>,
-						footer: (props) => props.column.id,
-					},
-					{
-						accessorKey: 'age',
-						header: () => <span className="ColumnTitle">Age</span>,
-						footer: (props) => props.column.id,
-					},
-					{
-						accessorKey: 'visits',
-						header: () => <span className="ColumnTitle">Visitors</span>,
-						footer: (props) => props.column.id,
-					},
-					{
-						accessorKey: 'status',
-						header: () => <span className="ColumnTitle">Status</span>,
-						footer: (props) => props.column.id,
-					},
-					{
-						accessorKey: 'progress',
-						header: () => <span className="ColumnTitle">Progress</span>,
-						footer: (props) => props.column.id,
-					},
-				],
-			},
-		],
-		[],
+	const handleCancelRowEdits = () => {
+		setValidationErrors({});
+	};
+
+	const handleDeleteRow = React.useCallback(
+		(row: MRT_Row<Domain>) => {
+			if (
+				!confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+			) {
+				return;
+			}
+			//send api delete request here, then refetch or update local table data for re-render
+			tableData.splice(row.index, 1);
+			setTableData([...tableData]);
+		},
+		[tableData],
 	);
 
-	const [data, setData] = React.useState(() => makeData(100000));
-	const refreshData = () => setData(() => makeData(100000));
+	const getCommonEditTextInputProps = React.useCallback(
+		(
+			cell: MRT_Cell<Domain>,
+		): MRT_ColumnDef<Domain>['mantineEditTextInputProps'] => {
+			return {
+				error: validationErrors[cell.id],
+				onBlur: (event) => {
+					const isValid =
+						cell.column.id === 'email'
+							? validateEmail(event.target.value)
+							: cell.column.id === 'age'
+							? validateAge(+event.target.value)
+							: validateRequired(event.target.value);
+					if (!isValid) {
+						//set validation error for cell if invalid
+						setValidationErrors({
+							...validationErrors,
+							[cell.id]: `${cell.column.columnDef.header} is required`,
+						});
+					} else {
+						//remove validation error for cell if valid
+						delete validationErrors[cell.id];
+						setValidationErrors({
+							...validationErrors,
+						});
+					}
+				},
+			};
+		},
+		[validationErrors],
+	);
 
+	const columns = React.useMemo<MRT_ColumnDef<Domain>[]>(
+		() => [
+			{
+				accessorKey: 'id',
+				header: 'ID',
+				enableColumnOrdering: false,
+				enableEditing: false, //disable editing on this column
+				enableSorting: false,
+				size: 80,
+			},
+			{
+				accessorKey: 'name',
+				header: 'name',
+				size: 140,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+			{
+				accessorKey: 'url',
+				header: 'url',
+				size: 140,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+			{
+				accessorKey: 'last_configured_by',
+				header: 'last_configured_by',
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+					type: 'email',
+				}),
+			},
+			{
+				accessorKey: 'emails',
+				header: 'emails',
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+					type: 'email',
+				}),
+			},
+			{
+				accessorKey: 'phones',
+				header: 'phones',
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+			{
+				accessorKey: 'is_active',
+				header: 'Age',
+				size: 80,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+					type: 'boolean',
+				}),
+			},
+			{
+				accessorKey: 'purchase_date',
+				header: 'purchase_date',
+				size: 80,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+			{
+				accessorKey: 'expiration_date',
+				header: 'expiration_date',
+				size: 80,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+			{
+				accessorKey: 'owner_id',
+				header: 'Owner',
+				size: 80,
+				mantineEditTextInputProps: ({ cell }) => ({
+					...getCommonEditTextInputProps(cell),
+				}),
+			},
+		],
+		[getCommonEditTextInputProps],
+	);
 	return (
 		<>
-			<Table
-				{...{
-					data,
-					columns,
+			<MantineReactTable
+				displayColumnDefOptions={{
+					'mrt-row-actions': {
+						mantineTableHeadCellProps: {
+							align: 'center',
+						},
+						size: 120,
+					},
 				}}
+				columns={columns}
+				data={tableData}
+				editingMode="modal" //default
+				enableColumnOrdering
+				enableEditing
+				onEditingRowSave={handleSaveRowEdits}
+				onEditingRowCancel={handleCancelRowEdits}
+				renderRowActions={({ row, table }) => (
+					<Box sx={{ display: 'flex', gap: '16px' }}>
+						<Tooltip withArrow position="left" label="Edit">
+							<ActionIcon onClick={() => table.setEditingRow(row)}>
+								<IconEdit />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip withArrow position="right" label="Delete">
+							<ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
+								<IconTrash />
+							</ActionIcon>
+						</Tooltip>
+					</Box>
+				)}
+				renderTopToolbarCustomActions={() => (
+					<Button
+						color="teal"
+						onClick={() => setCreateModalOpen(true)}
+						variant="filled"
+					>
+						Create New Account
+					</Button>
+				)}
 			/>
-
-			<div>
-				<button onClick={() => rerender()} className="TableButton">
-					Force Rerender
-				</button>
-			</div>
-			<div>
-				<button onClick={() => refreshData()} className="TableButton">
-					Refresh Data
-				</button>
-			</div>
+			<CreateNewAccountModal
+				columns={columns}
+				open={createModalOpen}
+				onClose={() => setCreateModalOpen(false)}
+				onSubmit={handleCreateNewRow}
+			/>
 		</>
 	);
 };
 
-function Table({
-	data,
+interface Props {
+	columns: MRT_ColumnDef<Domain>[];
+	onClose: () => void;
+	onSubmit: (values: Domain) => void;
+	open: boolean;
+}
+
+//example of creating a mantine dialog modal for creating new rows
+export const CreateNewAccountModal = ({
+	open,
 	columns,
-}: {
-	data: Person[];
-	columns: ColumnDef<Person>[];
-}) {
-	const table = useReactTable({
-		data,
-		columns,
-		// Pipeline
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		//
-		debugTable: true,
-	});
+	onClose,
+	onSubmit,
+}: Props) => {
+	const [values, setValues] = React.useState<any>(() =>
+		columns.reduce((acc, column) => {
+			acc[column.accessorKey ?? ''] = '';
+			return acc;
+		}, {} as any),
+	);
+
+	const handleSubmit = () => {
+		//put your validation logic here
+		onSubmit(values);
+		onClose();
+	};
 
 	return (
-		<div className="card">
-			<div className="card-body">
-				<div className="card-title-container">
-					<div>
-						<h3 className="card-title">Transactions</h3>
-						<span className="card-subtitle">
-							This is a list of latest transactions
-						</span>
-					</div>
-				</div>
-				<div className="table-container">
-					<table>
-						<thead>
-							{table.getHeaderGroups().map((headerGroup) => (
-								<tr
-									key={headerGroup.id}
-									className={headerGroup.id === '0' ? 'hidden' : ''}
-								>
-									{headerGroup.headers.map((header) => {
-										return (
-											<th key={header.id} colSpan={header.colSpan}>
-												{header.isPlaceholder ? null : (
-													<div>
-														{flexRender(
-															header.column.columnDef.header,
-															header.getContext(),
-														)}
-														{header.column.getCanFilter() ? (
-															<div>
-																<Filter column={header.column} table={table} />
-															</div>
-														) : null}
-													</div>
-												)}
-											</th>
-										);
-									})}
-								</tr>
-							))}
-						</thead>
-						<tbody>
-							{table.getRowModel().rows.map((row, index) => {
-								return (
-									<tr
-										key={row.id}
-										className={index % 2 === 0 ? '' : 'striped-tr'}
-									>
-										{row.getVisibleCells().map((cell) => {
-											return (
-												<td key={cell.id}>
-													{flexRender(
-														cell.column.columnDef.cell,
-														cell.getContext(),
-													)}
-												</td>
-											);
-										})}
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
-				</div>
-				<div className="table-footer">
-					<div>
-						<div className="h-2" />
-						<div className="arrow-buttons">
-							<button
-								onClick={() => table.setPageIndex(0)}
-								disabled={!table.getCanPreviousPage()}
-							>
-								{'<<'}
-							</button>
-							<button
-								onClick={() => table.previousPage()}
-								disabled={!table.getCanPreviousPage()}
-							>
-								{'<'}
-							</button>
-							<button
-								onClick={() => table.nextPage()}
-								disabled={!table.getCanNextPage()}
-							>
-								{'>'}
-							</button>
-							<button
-								onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-								disabled={!table.getCanNextPage()}
-							>
-								{'>>'}
-							</button>
-							<span>
-								<div>Page</div>
-								<strong>
-									{table.getState().pagination.pageIndex + 1} of{' '}
-									{table.getPageCount()}
-								</strong>
-							</span>
-							<span>
-								| Go to page:
-								<input
-									type="number"
-									defaultValue={table.getState().pagination.pageIndex + 1}
-									onChange={(event) => {
-										const page: number = event.target.value
-											? Number(event.target.value) - 1
-											: 0;
-										table.setPageIndex(page);
-									}}
-								/>
-							</span>
-							<select
-								value={table.getState().pagination.pageSize}
-								onChange={(e) => {
-									table.setPageSize(Number(e.target.value));
-								}}
-							>
-								{[10, 20, 30, 40, 50].map((pageSize) => (
-									<option key={pageSize} value={pageSize}>
-										Show {pageSize}
-									</option>
-								))}
-							</select>
-						</div>
-						<div className="hidden">
-							<div className="text-gray-900 dark:text-white">
-								{table.getRowModel().rows.length} Rows
-							</div>
-							<pre className="text-gray-900 dark:text-white">
-								{JSON.stringify(table.getState().pagination, null, 2)}
-							</pre>
-						</div>
-					</div>
-					<div className="flex-shrink-0">
-						<a
-							href="#"
-							className="inline-flex items-center p-2 text-xs font-medium uppercase rounded-lg text-primary-700 sm:text-sm hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
-						>
-							Transactions Report
-							<svg
-								className="w-4 h-4 ml-1 sm:w-5 sm:h-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M9 5l7 7-7 7"
-								></path>
-							</svg>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
+		<Dialog opened={open}>
+			<Title ta="center">Create New Account</Title>
+			<form onSubmit={(e) => e.preventDefault()}>
+				<Stack
+					sx={{
+						width: '100%',
+						gap: '24px',
+					}}
+				>
+					{columns.map((column) => (
+						<TextInput
+							key={column.accessorKey}
+							label={column.header}
+							name={column.accessorKey}
+							onChange={(e) =>
+								setValues({ ...values, [e.target.name]: e.target.value })
+							}
+						/>
+					))}
+				</Stack>
+			</form>
+			<Flex
+				sx={{
+					padding: '20px',
+					width: '100%',
+					justifyContent: 'flex-end',
+					gap: '16px',
+				}}
+			>
+				<Button onClick={onClose} variant="subtle">
+					Cancel
+				</Button>
+				<Button color="teal" onClick={handleSubmit} variant="filled">
+					Create New Account
+				</Button>
+			</Flex>
+		</Dialog>
 	);
-}
-function Filter({
-	column,
-	table,
-}: {
-	column: Column<any, any>;
-	table: ReactTable<any>;
-}) {
-	const firstValue = table
-		.getPreFilteredRowModel()
-		.flatRows[0]?.getValue(column.id);
+};
 
-	const columnFilterValue = column.getFilterValue();
-
-	return typeof firstValue === 'number' ? (
-		<div className="flex space-x-2">
-			<input
-				type="number"
-				value={((column.getFilterValue() as any)?.[0] ?? '') as string}
-				onChange={(e) =>
-					column.setFilterValue((old: any) => [e.target.value, old?.[1]])
-				}
-				placeholder={`Min`}
-				className="filter-input"
-			/>
-			<input
-				type="number"
-				value={((column.getFilterValue() as any)?.[1] ?? '') as string}
-				onChange={(e) =>
-					column.setFilterValue((old: any) => [old?.[0], e.target.value])
-				}
-				placeholder={`Max`}
-				className="filter-input"
-			/>
-		</div>
-	) : (
-		<input
-			type="text"
-			value={(columnFilterValue ?? '') as string}
-			onChange={(e) => column.setFilterValue(e.target.value)}
-			placeholder={`Search...`}
-			className="filter-input"
-		/>
-	);
-}
+const validateRequired = (value: string) => !!value.length;
+const validateEmail = (email: string) =>
+	!!email.length &&
+	email
+		.toLowerCase()
+		.match(
+			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+		);
+const validateAge = (age: number) => age >= 18 && age <= 50;
