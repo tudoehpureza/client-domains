@@ -36,6 +36,7 @@
 		"start": "astro dev"
 	},
 	"dependencies": {
+		"@astrojs/netlify": "^2.2.3",
 		"@astrojs/react": "^2.2.0",
 		"@astrojs/sitemap": "^1.1.0",
 		"@astrojs/tailwind": "^3.0.1",
